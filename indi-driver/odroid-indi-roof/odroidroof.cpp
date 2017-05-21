@@ -213,8 +213,9 @@ void OdroidRoof::TimerHit()
            {
                DEBUG(INDI::Logger::DBG_SESSION, "Roof is open.");
                setDomeState(DOME_UNPARKED);
-               DEBUG(INDI::Logger::DBG_SESSION, "Sending ABORT to stop motion");
-               //TODO: switch off relays here
+               DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
+               system("gpio write 0 1");
+               system("gpio write 2 1");
                //SetParked(false);
                //calling setParked(false) here caauses the driver to crash with nothing logged (looks like possibly an issue writing parking data). Therefore the next 4 lines are doing what is done in indidome.cpp' function. We dont care about parking data anyway as we get the parked state directly from the roof stop-switches.
                IUResetSwitch(&ParkSP);
@@ -238,8 +239,9 @@ void OdroidRoof::TimerHit()
        {
            if (getFullClosedLimitSwitch())
            {
-                DEBUG(INDI::Logger::DBG_SESSION, "Sending ABORT to stop motion");
-                //TODO: switch off relays here
+                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
+                system("gpio write 0 1");
+                system("gpio write 2 1");
                 DEBUG(INDI::Logger::DBG_SESSION, "Roof is closed.");
                 setDomeState(DOME_PARKED);
                 //SetParked(true); FIXME: strange bug here that crashes the driver
@@ -296,13 +298,15 @@ IPState OdroidRoof::Move(DomeDirection dir, DomeMotionCommand operation)
         }
         else if (dir == DOME_CW)
         {
-            DEBUG(INDI::Logger::DBG_SESSION, "OPENING");
-            //TODO: Switch on the relays here that will open the roof
+            DEBUG(INDI::Logger::DBG_WARNING, "Turning on OPEN relay. Setting GPIO0 -> 1 GPIO2 -> 0");
+            system("gpio write 0 1");
+            system("gpio write 2 0");
         }
         else if (dir == DOME_CCW)
         {
-            DEBUG(INDI::Logger::DBG_SESSION, "CLOSEING");
-            //TODO: Switch on the relays here that will close the roof
+            DEBUG(INDI::Logger::DBG_WARNING, "Turning on CLOSE relay. Setting GPIO0 -> 0 GPIO2 -> 1");
+            system("gpio write 0 0");
+            system("gpio write 2 1");
         }
 
         MotionRequest = MAX_ROLLOFF_DURATION;
@@ -357,7 +361,9 @@ IPState OdroidRoof::UnPark()
 bool OdroidRoof::Abort()
 {
     DEBUG(INDI::Logger::DBG_SESSION, "ABORT! Stopping motors");
-    //TODO: switch off the relays here
+    DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
+    system("gpio write 0 1");
+    system("gpio write 2 1");
     MotionRequest=-1;
 
     // If both limit switches are off, then we're neither parked nor unparked or a hardware failure (cable / rollers / jam).
