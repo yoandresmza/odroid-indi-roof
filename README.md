@@ -1,4 +1,4 @@
-An INDI (http://indilib.org/) driver and arduino firmware to control a roll off roof of an astronomical observatory.
+An INDI (http://indilib.org/) driver to control a roll off roof of an astronomical observatory.
 
 ![indi-driver](https://raw.githubusercontent.com/dokeeffe/odroid-indi-roof/master/docs/indi-driver.png)
 
