@@ -1,0 +1,7 @@
+<devGroup group="Domes">
+        <device label="Odroid Roof">
+                <driver name="Aldi Roof">odroid_indi_roof</driver>
+                <version>1.0</version>
+        </device>
+</devGroup>
+
