@@ -5,3 +5,7 @@ An INDI (http://indilib.org/) driver to control a roll off roof of an astronomic
 ## TODO: UPDATE README
 
 Relays attached to GPIO pins of an Odroid board control linear actuators which move the roof.
+
+in folder: switches-read-test
+gcc -o read read.c -lwiringPi -lpthread
+This will allow you to test the end limit switches

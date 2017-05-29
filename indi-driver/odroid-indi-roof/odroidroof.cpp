@@ -12,6 +12,7 @@ Indi observatory roof driver for an Odroid board with relays and switches attach
 #include <memory>
 
 #include <indicom.h>
+#include <wiringPi.h>
 
 std::unique_ptr<OdroidRoof> rollOff(new OdroidRoof());
 
@@ -171,9 +172,6 @@ bool OdroidRoof::updateProperties()
     return true;
 }
 
-/**
-* Disconnect from the arduino
-**/
 bool OdroidRoof::Disconnect()
 {
     DEBUG(INDI::Logger::DBG_SESSION, "Disconnecting");
@@ -213,9 +211,9 @@ void OdroidRoof::TimerHit()
            {
                DEBUG(INDI::Logger::DBG_SESSION, "Roof is open.");
                setDomeState(DOME_UNPARKED);
-               DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
+               DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO1 -> 1");
                system("gpio write 0 1");
-               system("gpio write 2 1");
+               system("gpio write 1 1");
                //SetParked(false);
                //calling setParked(false) here caauses the driver to crash with nothing logged (looks like possibly an issue writing parking data). Therefore the next 4 lines are doing what is done in indidome.cpp' function. We dont care about parking data anyway as we get the parked state directly from the roof stop-switches.
                IUResetSwitch(&ParkSP);
@@ -237,13 +235,14 @@ void OdroidRoof::TimerHit()
        // Roll Off is closing
        else if (DomeMotionS[DOME_CCW].s == ISS_ON)
        {
+	   IDSetText(&CurrentStateTP, "CLOSING");
            if (getFullClosedLimitSwitch())
            {
-                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
-                system("gpio write 0 1");
-                system("gpio write 2 1");
                 DEBUG(INDI::Logger::DBG_SESSION, "Roof is closed.");
                 setDomeState(DOME_PARKED);
+                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
+                system("gpio write 0 1");
+                system("gpio write 1 1");
                 //SetParked(true); FIXME: strange bug here that crashes the driver
                 std::string stateString = "CLOSED";
                 char status[32];
@@ -267,7 +266,7 @@ bool OdroidRoof::saveConfigItems(FILE *fp)
 }
 
 /**
- * Move the roof. 
+ * Move the roof.
  *
  **/
 IPState OdroidRoof::Move(DomeDirection dir, DomeMotionCommand operation)
@@ -298,15 +297,15 @@ IPState OdroidRoof::Move(DomeDirection dir, DomeMotionCommand operation)
         }
         else if (dir == DOME_CW)
         {
-            DEBUG(INDI::Logger::DBG_WARNING, "Turning on OPEN relay. Setting GPIO0 -> 1 GPIO2 -> 0");
-            system("gpio write 0 1");
-            system("gpio write 2 0");
+            DEBUG(INDI::Logger::DBG_WARNING, "Turning on OPEN relay. Setting GPIO0 -> 0 GPIO1 -> 1");
+            system("gpio write 0 0");
+            system("gpio write 1 1");
         }
         else if (dir == DOME_CCW)
         {
-            DEBUG(INDI::Logger::DBG_WARNING, "Turning on CLOSE relay. Setting GPIO0 -> 0 GPIO2 -> 1");
-            system("gpio write 0 0");
-            system("gpio write 2 1");
+            DEBUG(INDI::Logger::DBG_WARNING, "Turning on CLOSE relay. Setting GPIO0 -> 1 GPIO2 -> 0");
+            system("gpio write 0 1");
+            system("gpio write 1 0");
         }
 
         MotionRequest = MAX_ROLLOFF_DURATION;
@@ -363,7 +362,7 @@ bool OdroidRoof::Abort()
     DEBUG(INDI::Logger::DBG_SESSION, "ABORT! Stopping motors");
     DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
     system("gpio write 0 1");
-    system("gpio write 2 1");
+    system("gpio write 1 1");
     MotionRequest=-1;
 
     // If both limit switches are off, then we're neither parked nor unparked or a hardware failure (cable / rollers / jam).
@@ -395,10 +394,18 @@ float OdroidRoof::CalcTimeLeft(timeval start)
  **/
 bool OdroidRoof::getFullOpenedLimitSwitch()
 {
-    DEBUG(INDI::Logger::DBG_SESSION, "Checking fully open switch");
-    // TODO: Check the GPIO based switch here!!!!
-    return false;
+  if(wiringPiSetup() == -1)
+  printf("ERROR");
 
+    DEBUG(INDI::Logger::DBG_SESSION, "Checking fully open switch");
+    if (digitalRead(5) != 1) {
+        fullOpenLimitSwitch = ISS_ON;
+        return true;
+    }
+    else {
+        DEBUG(INDI::Logger::DBG_SESSION, "Fully open switch OFF");
+        return false;
+    }
 }
 
 /**
@@ -406,7 +413,16 @@ bool OdroidRoof::getFullOpenedLimitSwitch()
  **/
 bool OdroidRoof::getFullClosedLimitSwitch()
 {
+  if(wiringPiSetup() == -1)
+  printf("ERROR");
+
     DEBUG(INDI::Logger::DBG_SESSION, "Checking fully closed switch");
-    // TODO: Check the GPIO based switch here!!!!
-    return false;
+    if (digitalRead(4) != 0) {
+        fullClosedLimitSwitch = ISS_ON;
+        return true;
+    }
+    else {
+        DEBUG(INDI::Logger::DBG_SESSION, "Fully Closed switch OFF");
+        return false;
+    }
 }

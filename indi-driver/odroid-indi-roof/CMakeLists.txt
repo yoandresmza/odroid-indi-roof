@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.4.7)
 PROJECT(odroid_indi_roof CXX C)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-o -lwiringPi -lpthread -std=c++0x ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/")
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 2)
- 
+
 find_package(INDI REQUIRED)
 find_package(Nova REQUIRED)
 
