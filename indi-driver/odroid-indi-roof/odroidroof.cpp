@@ -398,7 +398,7 @@ bool OdroidRoof::getFullOpenedLimitSwitch()
   printf("ERROR");
 
     DEBUG(INDI::Logger::DBG_SESSION, "Checking fully open switch");
-    if (digitalRead(5) != 1) {
+    if (digitalRead(4) != 0) {
         fullOpenLimitSwitch = ISS_ON;
         return true;
     }
@@ -417,7 +417,7 @@ bool OdroidRoof::getFullClosedLimitSwitch()
   printf("ERROR");
 
     DEBUG(INDI::Logger::DBG_SESSION, "Checking fully closed switch");
-    if (digitalRead(4) != 0) {
+    if (digitalRead(5) != 1) {
         fullClosedLimitSwitch = ISS_ON;
         return true;
     }

@@ -9,7 +9,12 @@ set (VERSION_MINOR 2)
 
 find_package(INDI REQUIRED)
 find_package(Nova REQUIRED)
+# Locate libraries and headers
+find_package(WiringPi REQUIRED)
+find_package(Threads REQUIRED)
 
+# Include headers
+include_directories(${WIRINGPI_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${INDI_INCLUDE_DIR})
@@ -22,6 +27,8 @@ set(odroidrolloff_SRCS
 
 add_executable(odroid_indi_roof ${odroidrolloff_SRCS})
 target_link_libraries(odroid_indi_roof ${INDI_DRIVER_LIBRARIES})
+target_link_libraries(odroid_indi_roof ${WIRINGPI_LIBRARIES})
+target_link_libraries(odroid_indi_roof ${CMAKE_THREAD_LIBS_INIT})
 install(TARGETS odroid_indi_roof RUNTIME DESTINATION bin )
 install(FILES odroid_indi_roof.xml DESTINATION ${INDI_DATA_DIR})
 

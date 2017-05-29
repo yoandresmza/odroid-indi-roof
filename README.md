@@ -9,3 +9,7 @@ Relays attached to GPIO pins of an Odroid board control linear actuators which m
 in folder: switches-read-test .
 gcc -o read read.c -lwiringPi -lpthread .
 This will allow you to test the end limit switches
+
+
+UDPATE:
+It is all working now, I will tidy this repo later on...
