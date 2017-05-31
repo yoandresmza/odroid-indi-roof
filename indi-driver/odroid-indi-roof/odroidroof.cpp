@@ -81,6 +81,7 @@ OdroidRoof::OdroidRoof()
   fullClosedLimitSwitch = ISS_OFF;
   MotionRequest=0;
   SetDomeCapability(DOME_CAN_ABORT | DOME_CAN_PARK);
+  setDomeConnection(CONNECTION_NONE);
 }
 
 /**
