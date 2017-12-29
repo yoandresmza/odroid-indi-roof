@@ -93,6 +93,8 @@ bool OdroidRoof::initProperties()
     INDI::Dome::initProperties();
     SetParkDataType(PARK_NONE);
     addAuxControls();
+    system("gpio mode 0 out");
+    system("gpio mode 1 out");
     IUFillText(&CurrentStateT[0],"State","Roof State",NULL);
     IUFillTextVector(&CurrentStateTP,CurrentStateT,1,getDeviceName(),"STATE","ROOF_STATE",MAIN_CONTROL_TAB,IP_RO,60,IPS_IDLE);
     return true;
@@ -107,6 +109,7 @@ bool OdroidRoof::ISSnoopDevice (XMLEle *root)
 bool OdroidRoof::SetupParms()
 {
     DEBUG(INDI::Logger::DBG_DEBUG, "Setting up params");
+    InitPark();
     fullOpenLimitSwitch   = ISS_OFF;
     fullClosedLimitSwitch = ISS_OFF;
     std::string roofStateString = "UNKNOWN";
