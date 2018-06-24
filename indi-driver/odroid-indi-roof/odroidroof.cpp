@@ -57,7 +57,7 @@ void ISNewNumber(const char *dev, const char *name, double values[], char *names
         rollOff->ISNewNumber(dev, name, values, names, num);
 }
 
-void ISNewBLOB (const char *dev, const char *name, int sizes[], int blobsizes[], char *blobs[], char *formats[], char *names[], int n)
+void ISNewBLOB (const char *dev, const char *name, int sizes[], int blobsizes[], char *blobs[], char *formats[], char *names[], int num)
 {
   INDI_UNUSED(dev);
   INDI_UNUSED(name);
@@ -66,7 +66,7 @@ void ISNewBLOB (const char *dev, const char *name, int sizes[], int blobsizes[],
   INDI_UNUSED(blobs);
   INDI_UNUSED(formats);
   INDI_UNUSED(names);
-  INDI_UNUSED(n);
+  INDI_UNUSED(num);
 }
 
 void ISSnoopDevice (XMLEle *root)
@@ -215,6 +215,7 @@ void OdroidRoof::TimerHit()
            {
                DEBUG(INDI::Logger::DBG_SESSION, "Roof is open.");
                setDomeState(DOME_UNPARKED);
+	       SetParked(false);
                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO1 -> 1");
                system("gpio write 0 1");
                system("gpio write 1 1");
@@ -228,7 +229,6 @@ void OdroidRoof::TimerHit()
                strcpy(status, stateString.c_str());
                IUSaveText(&CurrentStateT[0], status);
                IDSetText(&CurrentStateTP, NULL);
-	       SetParked(false);
                return;
            }
            if (CalcTimeLeft(MotionStart) <= 0) {
@@ -242,8 +242,9 @@ void OdroidRoof::TimerHit()
 	   IDSetText(&CurrentStateTP, "CLOSING");
            if (getFullClosedLimitSwitch())
            {
-                DEBUG(INDI::Logger::DBG_SESSION, "Roof is closed.");
+		DEBUG(INDI::Logger::DBG_SESSION, "Roof is closed.");
                 setDomeState(DOME_PARKED);
+                SetParked(true);
                 DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
                 system("gpio write 0 1");
                 system("gpio write 1 1");
@@ -252,7 +253,6 @@ void OdroidRoof::TimerHit()
                 strcpy(status, stateString.c_str());
                 IUSaveText(&CurrentStateT[0], status);
                 IDSetText(&CurrentStateTP, NULL);
-                SetParked(true);
 	        return;
            }
            if (CalcTimeLeft(MotionStart) <= 0) {
