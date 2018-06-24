@@ -25,6 +25,7 @@ set(odroidrolloff_SRCS
         ${CMAKE_CURRENT_SOURCE_DIR}/odroidroof.cpp
    )
 
+cmake_policy(SET CMP0003 OLD)
 add_executable(odroid_indi_roof ${odroidrolloff_SRCS})
 target_link_libraries(odroid_indi_roof ${INDI_DRIVER_LIBRARIES})
 target_link_libraries(odroid_indi_roof ${WIRINGPI_LIBRARIES})
