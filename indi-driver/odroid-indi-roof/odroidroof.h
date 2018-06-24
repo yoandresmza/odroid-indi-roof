@@ -16,8 +16,8 @@ class OdroidRoof : public INDI::Dome
         const char *getDefaultName();
         bool updateProperties();
         virtual bool ISSnoopDevice (XMLEle *root);
-		virtual bool ISNewSwitch (const char *dev, const char *name, ISState *states, char *names[], int n);
-		virtual bool saveConfigItems(FILE *fp);
+	virtual bool ISNewSwitch (const char *dev, const char *name, ISState *states, char *names[], int n);
+	virtual bool saveConfigItems(FILE *fp);
 
       protected:
 
