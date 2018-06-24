@@ -218,7 +218,6 @@ void OdroidRoof::TimerHit()
                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO1 -> 1");
                system("gpio write 0 1");
                system("gpio write 1 1");
-               SetParked(false);
                //calling setParked(false) here caauses the driver to crash with nothing logged (looks like possibly an issue writing parking data). Therefore the next 4 lines are doing what is done in indidome.cpp' function. We dont care about parking data anyway as we get the parked state directly from the roof stop-switches.
                IUResetSwitch(&ParkSP);
                ParkS[1].s = ISS_ON;
@@ -229,6 +228,7 @@ void OdroidRoof::TimerHit()
                strcpy(status, stateString.c_str());
                IUSaveText(&CurrentStateT[0], status);
                IDSetText(&CurrentStateTP, NULL);
+	       SetParked(false);
                return;
            }
            if (CalcTimeLeft(MotionStart) <= 0) {
@@ -247,13 +247,13 @@ void OdroidRoof::TimerHit()
                 DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
                 system("gpio write 0 1");
                 system("gpio write 1 1");
-                SetParked(true);
                 std::string stateString = "CLOSED";
                 char status[32];
                 strcpy(status, stateString.c_str());
                 IUSaveText(&CurrentStateT[0], status);
                 IDSetText(&CurrentStateTP, NULL);
-                return;
+                SetParked(true);
+	        return;
            }
            if (CalcTimeLeft(MotionStart) <= 0) {
                DEBUG(INDI::Logger::DBG_SESSION, "Exceeded max motor run duration. Aborting.");
