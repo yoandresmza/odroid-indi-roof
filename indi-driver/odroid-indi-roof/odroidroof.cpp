@@ -215,7 +215,6 @@ void OdroidRoof::TimerHit()
            {
                DEBUG(INDI::Logger::DBG_SESSION, "Roof is open.");
                setDomeState(DOME_UNPARKED);
-	       SetParked(false);
                DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO1 -> 1");
                system("gpio write 0 1");
                system("gpio write 1 1");
@@ -238,12 +237,11 @@ void OdroidRoof::TimerHit()
        // Roll Off is closing
        else if (DomeMotionS[DOME_CCW].s == ISS_ON)
        {
-	   IDSetText(&CurrentStateTP, "CLOSING");
+	  // IDSetText(&CurrentStateTP, "CLOSING");
            if (getFullClosedLimitSwitch())
            {
 		DEBUG(INDI::Logger::DBG_SESSION, "Roof is closed.");
                 setDomeState(DOME_PARKED);
-                SetParked(true);
                 DEBUG(INDI::Logger::DBG_WARNING, "Turning off relay. Setting GPIO0 -> 1 GPIO2 -> 1");
                 system("gpio write 0 1");
                 system("gpio write 1 1");
@@ -403,6 +401,7 @@ bool OdroidRoof::getFullOpenedLimitSwitch()
     DEBUG(INDI::Logger::DBG_SESSION, "Checking fully open switch");
     if (digitalRead(4) != 0) {
         fullOpenLimitSwitch = ISS_ON;
+	SetParked(false);
         return true;
     }
     else {
@@ -422,6 +421,7 @@ bool OdroidRoof::getFullClosedLimitSwitch()
     DEBUG(INDI::Logger::DBG_SESSION, "Checking fully closed switch");
     if (digitalRead(5) != 1) {
         fullClosedLimitSwitch = ISS_ON;
+	SetParked(true);
         return true;
     }
     else {
