@@ -2,7 +2,7 @@
 <driversList>
 <devGroup group="Domes">
         <device label="Odroid Roof">
-                <driver name="Aldi Roof">odroid_indi_roof</driver>
+                <driver name="Aldi Roof">indi_roof_odroid</driver>
                 <version>1.0</version>
         </device>
 </devGroup>

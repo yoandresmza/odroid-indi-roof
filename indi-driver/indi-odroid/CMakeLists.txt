@@ -26,10 +26,10 @@ set(odroidrolloff_SRCS
    )
 
 cmake_policy(SET CMP0003 OLD)
-add_executable(odroid_indi_roof ${odroidrolloff_SRCS})
-target_link_libraries(odroid_indi_roof ${INDI_DRIVER_LIBRARIES})
-target_link_libraries(odroid_indi_roof ${WIRINGPI_LIBRARIES})
-target_link_libraries(odroid_indi_roof ${CMAKE_THREAD_LIBS_INIT})
-install(TARGETS odroid_indi_roof RUNTIME DESTINATION bin )
-install(FILES odroid_indi_roof.xml DESTINATION ${INDI_DATA_DIR})
+add_executable(indi_roof_odroid ${odroidrolloff_SRCS})
+target_link_libraries(indi_roof_odroid ${INDI_DRIVER_LIBRARIES})
+target_link_libraries(indi_roof_odroid ${WIRINGPI_LIBRARIES})
+target_link_libraries(indi_roof_odroid ${CMAKE_THREAD_LIBS_INIT})
+install(TARGETS indi_roof_odroid RUNTIME DESTINATION bin )
+install(FILES indi_roof_odroid.xml DESTINATION ${INDI_DATA_DIR})
 

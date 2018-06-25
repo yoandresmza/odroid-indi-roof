@@ -2,6 +2,6 @@
 mkdir build
 cd build
 rm * -rf
-cmake -DCMAKE_INSTALL_PREFIX=/usr ../odroid-indi-roof/
+cmake -DCMAKE_INSTALL_PREFIX=/usr ../indi-odroid/
 sudo make install
 
