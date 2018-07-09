@@ -1,6 +1,3 @@
-#ifndef OdroidRoof_H
-#define OdroidRoof_H
-
 #include <indidome.h>
 #include <math.h>
 #include <sys/time.h>
@@ -51,5 +48,3 @@ class OdroidRoof : public INDI::Dome
         float CalcTimeLeft(timeval);
 
 };
-
-#endif
