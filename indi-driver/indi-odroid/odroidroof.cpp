@@ -80,7 +80,7 @@ OdroidRoof::OdroidRoof()
   fullOpenLimitSwitch   = ISS_OFF;
   fullClosedLimitSwitch = ISS_OFF;
   MotionRequest=0;
-  SetDomeCapability(DOME_CAN_ABORT | DOME_CAN_PARK);
+  SetDomeCapability(DOME_CAN_ABORT | DOME_CAN_PARK | DOME_HAS_VARIABLE_SPEED);
   setDomeConnection(CONNECTION_NONE);
 }
 
