@@ -17,7 +17,7 @@ Indi observatory roof driver for an Odroid board with relays and switches attach
 std::unique_ptr<OdroidRoof> rollOff(new OdroidRoof());
 
 // This is the max ontime for the motors. Safety cut out. Although a lot of damage can be done on this time!!
-#define MAX_ROLLOFF_DURATION    20    //TODO: Check if this is enough time.
+#define MAX_ROLLOFF_DURATION    22    //TODO: Check if this is enough time.
 
 void ISPoll(void *p);
 
