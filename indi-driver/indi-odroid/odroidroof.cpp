@@ -14,10 +14,10 @@ Indi observatory roof driver for an Odroid board with relays and switches attach
 #include <indicom.h>
 #include <wiringPi.h>
 
-std::unique_ptr<OdroidRoof> rollOff(new OdroidRoof());
+std::unique_ptr<OdroidRoof> roof(new OdroidRoof());
 
 // This is the max ontime for the motors. Safety cut out. Although a lot of damage can be done on this time!!
-#define MAX_ROLLOFF_DURATION    22    //TODO: Check if this is enough time.
+#define MAX_ROOF_DURATION    22    //TODO: Check if this is enough time.
 
 void ISPoll(void *p);
 
@@ -29,32 +29,32 @@ void ISInit()
        return;
 
     isInit = 1;
-    if(rollOff.get() == 0) rollOff.reset(new OdroidRoof());
+    if(roof.get() == 0) roof.reset(new OdroidRoof());
 
 }
 
 void ISGetProperties(const char *dev)
 {
         ISInit();
-        rollOff->ISGetProperties(dev);
+        roof->ISGetProperties(dev);
 }
 
 void ISNewSwitch(const char *dev, const char *name, ISState *states, char *names[], int num)
 {
         ISInit();
-        rollOff->ISNewSwitch(dev, name, states, names, num);
+        roof->ISNewSwitch(dev, name, states, names, num);
 }
 
 void ISNewText(	const char *dev, const char *name, char *texts[], char *names[], int num)
 {
         ISInit();
-        rollOff->ISNewText(dev, name, texts, names, num);
+        roof->ISNewText(dev, name, texts, names, num);
 }
 
 void ISNewNumber(const char *dev, const char *name, double values[], char *names[], int num)
 {
         ISInit();
-        rollOff->ISNewNumber(dev, name, values, names, num);
+        roof->ISNewNumber(dev, name, values, names, num);
 }
 
 void ISNewBLOB (const char *dev, const char *name, int sizes[], int blobsizes[], char *blobs[], char *formats[], char *names[], int n)
@@ -72,7 +72,7 @@ void ISNewBLOB (const char *dev, const char *name, int sizes[], int blobsizes[],
 void ISSnoopDevice (XMLEle *root)
 {
     ISInit();
-    rollOff->ISSnoopDevice(root);
+    roof->ISSnoopDevice(root);
 }
 
 OdroidRoof::OdroidRoof()
@@ -116,7 +116,7 @@ bool OdroidRoof::SetupParms()
     if (getFullOpenedLimitSwitch()) {
         DEBUG(INDI::Logger::DBG_DEBUG, "Setting open flag on NOT PARKED");
         fullOpenLimitSwitch = ISS_ON;
-        setDomeState(DOME_IDLE);
+        setDomeState(DOME_UNPARKED);
         roofStateString = "OPEN";
     }
     if (getFullClosedLimitSwitch()) {
@@ -207,7 +207,7 @@ void OdroidRoof::TimerHit()
            return;
        }
 
-       // Roll off is opening
+       // Roof is opening
        if (DomeMotionS[DOME_CW].s == ISS_ON)
        {
            IDSetText(&CurrentStateTP, "OPENING");
@@ -234,7 +234,7 @@ void OdroidRoof::TimerHit()
                Abort();
            }
        }
-       // Roll Off is closing
+       // Roof is closing
        else if (DomeMotionS[DOME_CCW].s == ISS_ON)
        {
 	  // IDSetText(&CurrentStateTP, "CLOSING");
@@ -309,7 +309,7 @@ IPState OdroidRoof::Move(DomeDirection dir, DomeMotionCommand operation)
             system("gpio write 1 0");
         }
 
-        MotionRequest = MAX_ROLLOFF_DURATION;
+        MotionRequest = MAX_ROOF_DURATION;
         gettimeofday(&MotionStart,NULL);
         SetTimer(500);
         DEBUG(INDI::Logger::DBG_SESSION, "return IPS_BUSY");
@@ -334,7 +334,7 @@ IPState OdroidRoof::Park()
     IPState rc = INDI::Dome::Move(DOME_CCW, MOTION_START);
     if (rc==IPS_BUSY)
     {
-        DEBUG(INDI::Logger::DBG_SESSION, "Roll off is parking...");
+        DEBUG(INDI::Logger::DBG_SESSION, "Roof is closing...");
         return IPS_BUSY;
     }
     else
@@ -348,7 +348,7 @@ IPState OdroidRoof::UnPark()
 {
     IPState rc = INDI::Dome::Move(DOME_CW, MOTION_START);
     if (rc==IPS_BUSY) {
-           DEBUG(INDI::Logger::DBG_SESSION, "Roll off is unparking...");
+           DEBUG(INDI::Logger::DBG_SESSION, "Roff is opening...");
            return IPS_BUSY;
     }
     else
